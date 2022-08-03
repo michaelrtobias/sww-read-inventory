@@ -1,10 +1,9 @@
-const readInventory = require("./lambda/readInventory");
+const getInventory = require("./lambda/getInventory");
 exports.handler = async (event) => {
   console.log("event", event);
-  let { body } = event;
-  body = typeof body === "string" ? JSON.parse(body) : body;
   try {
-    const results = await readInventory(body);
+    const results = await getInventory();
+    console.log("results", results);
     let response = {
       statusCode: 200,
       headers: {

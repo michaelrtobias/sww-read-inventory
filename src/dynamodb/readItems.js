@@ -7,7 +7,17 @@ module.exports = async function (params, tableName) {
     region: "us-east-1",
   });
   params["TableName"] = tableName;
-  const query = await ddb.getItem(params).promise();
-  const unmarshalledQuery = AWS.DynamoDB.Converter.unmarshall(query);
-  return unmarshalledQuery;
+  const scanResults = await ddb.scan(params).promise();
+  console.log("scanResults", scanResults);
+  const unmarshalledScan = scanResults.Items.map((result) =>
+    AWS.DynamoDB.Converter.unmarshall(result)
+  );
+  console.log("unmarshalledScan", unmarshalledScan);
+  let results = {};
+  results.pagination = {
+    count: scanResults.Count,
+    scanned_count: scanResults.ScannedCount,
+  };
+  results.items = unmarshalledScan;
+  return results;
 };
